@@ -1,16 +1,15 @@
-from http import HTTPStatus
-from typing import Dict
 from datetime import datetime
 from functools import wraps
+from http import HTTPStatus
+from pathlib import Path
+from typing import Dict
+
 from fastapi import FastAPI, Request
 
-from pathlib import Path
+from app.schemas import PredictPayload
 from config import config
 from config.config import logger
-from tagifai import main
-
-from app.schemas import PredictPayload
-from tagifai import predict
+from tagifai import main, predict
 
 # Define application
 app = FastAPI(
@@ -19,6 +18,7 @@ app = FastAPI(
     version="0.1",
 )
 
+
 @app.on_event("startup")
 def load_artifacts():
     global artifacts
@@ -26,15 +26,17 @@ def load_artifacts():
     artifacts = main.load_artifacts(run_id=run_id)
     logger.info("Ready for inference!")
 
+
 """ @app.get("/")
 def _index() -> Dict:
-   
+
     response = {
         "message": HTTPStatus.OK.phrase,
         "status-code": HTTPStatus.OK,
         "data": {},
     }
     return response  """
+
 
 def construct_response(f):
     """Construct a JSON response for an endpoint."""
@@ -55,6 +57,7 @@ def construct_response(f):
 
     return wrap
 
+
 @app.get("/")
 @app.get("/", tags=["General"])
 @construct_response
@@ -73,13 +76,14 @@ def _index(request: Request) -> Dict:
 def _performance(request: Request, filter: str = None) -> Dict:
     """Get the performance metrics."""
     performance = artifacts["performance"]
-    data = {"performance":performance.get(filter, performance)}
+    data = {"performance": performance.get(filter, performance)}
     response = {
         "message": HTTPStatus.OK.phrase,
         "status-code": HTTPStatus.OK,
         "data": data,
     }
     return response
+
 
 @app.get("/args/{arg}", tags=["Arguments"])
 @construct_response
@@ -93,6 +97,7 @@ def _arg(request: Request, arg: str) -> Dict:
         },
     }
     return response
+
 
 @app.post("/predict", tags=["Prediction"])
 @construct_response

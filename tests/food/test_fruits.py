@@ -1,5 +1,6 @@
-from fruits import is_crisp
 import pytest
+from fruits import is_crisp
+
 
 def test_is_crisp():
     assert is_crisp(fruit="apple")
@@ -8,10 +9,12 @@ def test_is_crisp():
     with pytest.raises(ValueError):
         is_crisp(fruit=None)
         is_crisp(fruit="pear")
-        
+
+
 class Fruit(object):
     def __init__(self, name):
         self.name = name
+
 
 class TestFruit(object):
     @classmethod
@@ -33,8 +36,9 @@ class TestFruit(object):
         del self.fruit
 
     def test_init(self):
-        assert self.fruit.name == "apple"   
-        
+        assert self.fruit.name == "apple"
+
+
 @pytest.mark.parametrize(
     "fruit, crisp",
     [
@@ -44,17 +48,19 @@ class TestFruit(object):
     ],
 )
 def test_is_crisp_parametrize(fruit, crisp):
-    assert is_crisp(fruit=fruit) == crisp        
-        
+    assert is_crisp(fruit=fruit) == crisp
+
 
 @pytest.fixture
 def my_fruit():
     fruit = Fruit(name="apple")
     return fruit
 
+
 def test_fruit(my_fruit):
-    assert my_fruit.name == "apple"             
-             
+    assert my_fruit.name == "apple"
+
+
 @pytest.mark.fruits
-def test_fruit(my_fruit):
+def test_fruit1(my_fruit):
     assert my_fruit.name == "apple"

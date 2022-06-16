@@ -1,16 +1,18 @@
-from tagifai import data
-import numpy as np
 import tempfile
 from pathlib import Path
-import pytest
+
+import numpy as np
 import pandas as pd
+import pytest
+
+from tagifai import data
+
 
 class TestLabelEncoder:
     @classmethod
     def setup_class(cls):
         """Called before every class initialization."""
         pass
-
 
     @classmethod
     def teardown_class(cls):
@@ -64,13 +66,13 @@ class TestLabelEncoder:
         label_encoder.fit(["apple", "apple", "banana"])
         assert np.array_equal(label_encoder.encode(y_decoded), np.array(y_encoded))
         assert label_encoder.decode(y_encoded) == y_decoded
-        
+
+
 @pytest.mark.parametrize(
     "text, lower, stem, stopwords, cleaned_text",
     [
         ("Hello worlds", False, False, [], "Hello worlds"),
         ("Hello worlds", True, False, [], "hello worlds"),
-    
     ],
 )
 def test_preprocess(text, lower, stem, stopwords, cleaned_text):
@@ -83,7 +85,8 @@ def test_preprocess(text, lower, stem, stopwords, cleaned_text):
         )
         == cleaned_text
     )
-    
+
+
 @pytest.fixture(scope="module")
 def df():
     data = [
@@ -111,5 +114,4 @@ def test_replace_oos_labels(df, labels, unique_labels):
     replaced_df = data.replace_oos_labels(
         df=df.copy(), labels=labels, label_col="tag", oos_label="other"
     )
-    assert set(replaced_df.tag.unique()) == set(unique_labels)    
-        
+    assert set(replaced_df.tag.unique()) == set(unique_labels)

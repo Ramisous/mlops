@@ -8,6 +8,7 @@ import joblib
 import mlflow
 import optuna
 import pandas as pd
+import typer
 from numpyencoder import NumpyEncoder
 from optuna.integration.mlflow import MLflowCallback
 
@@ -16,8 +17,7 @@ from tagifai import data, predict, train, utils
 
 warnings.filterwarnings("ignore")
 
-import typer
-app = typer.Typer() 
+app = typer.Typer()
 
 
 @app.command()
@@ -34,6 +34,7 @@ def load_data():
     utils.save_dict(d=tags, filepath=tags_fp)
 
     print("✅ Saved raw data!")
+
 
 @app.command()
 def label_data(args_fp):
@@ -62,6 +63,7 @@ def label_data(args_fp):
     labeled_projects_fp = Path(config.DATA_DIR, "labeled_projects.json")
     utils.save_dict(d=df.to_dict(orient="records"), filepath=labeled_projects_fp)
     print("✅ Saved labeled data!")
+
 
 @app.command()
 def train_model(args_fp, experiment_name, run_name):
@@ -103,6 +105,7 @@ def train_model(args_fp, experiment_name, run_name):
     open(Path(config.CONFIG_DIR, "run_id.txt"), "w").write(run_id)
     utils.save_dict(performance, Path(config.CONFIG_DIR, "performance.json"))
 
+
 @app.command()
 def optimize(args_fp, study_name, num_trials):
     """Optimize hyperparameters."""
@@ -130,6 +133,7 @@ def optimize(args_fp, study_name, num_trials):
     print(f"\nBest value (f1): {study.best_trial.value}")
     print(f"Best hyperparameters: {json.dumps(study.best_trial.params, indent=2)}")
 
+
 @app.command()
 def predict_tag(text, run_id=None):
     """Predict tag for text."""
@@ -138,6 +142,7 @@ def predict_tag(text, run_id=None):
     artifacts = load_artifacts(run_id=run_id)
     prediction = predict.predict(texts=[text], artifacts=artifacts)
     print(json.dumps(prediction, indent=2))
+
 
 @app.command()
 def load_artifacts(run_id):
@@ -163,7 +168,7 @@ def load_artifacts(run_id):
         "model": model,
         "performance": performance,
     }
-    
+
+
 if __name__ == "__main__":
-    app()    
-      
+    app()

@@ -1,8 +1,7 @@
 from pathlib import Path
-import pytest
-from config import config
-from tagifai import main, predict, data
 
+from config import config
+from tagifai import data, main
 
 run_id = open(Path(config.CONFIG_DIR, "run_id.txt")).read()
 artifacts = main.load_artifacts(run_id=run_id)
@@ -14,9 +13,6 @@ data = {
         {"text": "Generative adversarial networks in both PyTorch and TensorFlow."},
     ]
 }
-response = client.post("/predict", json=data)
-assert response.status_code == HTTPStatus.OK
-assert response.request.method == "POST"
-assert len(response.json()["data"]["predictions"]) == len(data["texts"])
 
-print('yes')
+
+print("yes")
