@@ -9,7 +9,8 @@ import mlflow
 import optuna
 import pandas as pd
 import typer
-from numpyencoder import NumpyEncoder
+
+# from numpyencoder import NumpyEncoder
 from optuna.integration.mlflow import MLflowCallback
 
 from config import config
@@ -144,6 +145,10 @@ def predict_tag(text, run_id=None):
     print(json.dumps(prediction, indent=2))
 
 
+import os
+import pickle
+
+
 @app.command()
 def load_artifacts(run_id):
     """Load artifacts for a given run_id."""
@@ -152,14 +157,28 @@ def load_artifacts(run_id):
     artifacts_dir = Path(config.MODEL_REGISTRY, experiment_id, run_id, "artifacts")
     args = Namespace(**utils.load_dict(filepath=Path(artifacts_dir, "args.json")))
 
+    # print(artifacts_dir)
     # Load objects from run
     client = mlflow.tracking.MlflowClient()
     with tempfile.TemporaryDirectory() as dp:
+        # print('current directory ' + os.getcwd())
         client.download_artifacts(run_id=run_id, path="", dst_path=dp)
+        # print(clients)
+        # print('rami soussi')
+        # vectorizer = joblib.load(Path(dp, "vectorizer.pkl"))
+        # p1 = Path(dp, "vectorizer.pkl")
+        # with open(p1, 'rb') as f:
+        #    vectorizer = pickle.load(f)
         vectorizer = joblib.load(Path(dp, "vectorizer.pkl"))
         label_encoder = data.LabelEncoder.load(fp=Path(dp, "label_encoder.json"))
         model = joblib.load(Path(dp, "model.pkl"))
         performance = utils.load_dict(filepath=Path(dp, "performance.json"))
+    """ dp = "/mlops/stores/model/1/98de186f1c624d1ab3d4f743cb6e53c2/artifacts/"
+    client.download_artifacts(run_id=run_id, path="/mlops/stores/model/1/")
+    vectorizer = joblib.load(Path(dp, "vectorizer.pkl"))
+    label_encoder = data.LabelEncoder.load(fp=Path(dp, "label_encoder.json"))
+    model = joblib.load(Path(dp, "model.pkl"))
+    performance = utils.load_dict(filepath=Path(dp, "performance.json")) """
 
     return {
         "args": args,

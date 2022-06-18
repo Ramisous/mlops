@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from functools import wraps
 from http import HTTPStatus
@@ -23,6 +24,9 @@ app = FastAPI(
 def load_artifacts():
     global artifacts
     run_id = open(Path(config.CONFIG_DIR, "run_id.txt")).read()
+    # run_id = open(Path('/mlops/config/', "run_id.txt")).read()
+    # print(run_id)
+    # run_id = '/mlops/stores/model/1/98de186f1c624d1ab3d4f743cb6e53c2/artifacts/.'
     artifacts = main.load_artifacts(run_id=run_id)
     logger.info("Ready for inference!")
 

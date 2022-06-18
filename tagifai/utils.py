@@ -29,3 +29,12 @@ def set_seeds(seed=42):
     # Set seeds
     np.random.seed(seed)
     random.seed(seed)
+
+
+def list_to_dict(list_of_dicts, key):
+
+    d_b = {}
+    for d_a in list_of_dicts:
+        d_b_key = d_a.pop(key)
+        d_b[d_b_key] = d_a
+    return d_b
