@@ -1,8 +1,10 @@
+import itertools
 import json
 import re
 from collections import Counter
 
 import numpy as np
+import pandas as pd
 from nltk.stem import PorterStemmer
 from sklearn.model_selection import train_test_split
 
@@ -112,3 +114,36 @@ def get_data_splits(X, y, train_size=0.7):
     X_train, X_, y_train, y_ = train_test_split(X, y, train_size=train_size, stratify=y)
     X_val, X_test, y_val, y_test = train_test_split(X_, y_, train_size=0.5, stratify=y_)
     return X_train, X_val, X_test, y_train, y_val, y_test
+
+
+def filter_items(items=[], include=[], exclude=[]):
+
+    filtered = [item for item in items if item in include and item not in exclude]
+
+    return filtered
+
+
+def prepare(df=pd.DataFrame(), include=[], exclude=[], min_tag_freq=30):
+    """Prepare the raw data.
+    Args:
+        df (pd.DataFrame): Pandas DataFrame with data.
+        include (List): list of tags to include.
+        exclude (List): list of tags to exclude.
+        min_tag_freq (int, optional): Minimum frequency of tags required. Defaults to 30.
+    Returns:
+        A cleaned dataframe and dictionary of tags and counts above the frequency threshold.
+    """
+    # Filter tags for each project
+    print(df.columns)
+    df.tag = df.tag.apply(filter_items, include=include, exclude=exclude)
+    tags = Counter(itertools.chain.from_iterable(df.tag.values))
+
+    # Filter tags that have fewer than `min_tag_freq` occurrences
+    tags_above_freq = Counter(tag for tag in tags.elements() if tags[tag] >= min_tag_freq)
+    tags_below_freq = Counter(tag for tag in tags.elements() if tags[tag] < min_tag_freq)
+    df.tag = df.tag.apply(filter_items, include=list(tags_above_freq.keys()))
+
+    # Remove projects with no more remaining relevant tags
+    df = df[df.tag.map(len) > 0]
+
+    return df, tags_above_freq, tags_below_freq
