@@ -29,5 +29,4 @@ jobs:
 
       - name: Execute tests
         run: |
-          export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
           pytest tests/code --ignore tests/code/test_main.py --ignore tests/code/test_data.py
