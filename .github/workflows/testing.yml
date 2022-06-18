@@ -26,5 +26,3 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install -e ".[test]" --no-cache-dir
-      - name: Execute tests
-        run: python 'print(5)'
