@@ -26,5 +26,7 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install -e ".[test]" --no-cache-dir
+      - name: Delete descriptors
+        run: export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
       - name: Execute tests
         run: pytest tests --ignore tests/code/test_main.py --ignore tests/code/test_data.py
